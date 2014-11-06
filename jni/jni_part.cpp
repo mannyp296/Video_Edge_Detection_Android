@@ -1,0 +1,62 @@
+#include <jni.h>
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/features2d/features2d.hpp>
+#include <vector>
+
+using namespace std;
+using namespace cv;
+
+extern "C" {
+JNIEXPORT void JNICALL Java_org_opencv_samples_tutorial2_Tutorial2Activity_FindFeatures(JNIEnv*, jobject, jlong addrGray, jlong addrRgba);
+
+JNIEXPORT void JNICALL Java_org_opencv_samples_tutorial2_Tutorial2Activity_FindFeatures(JNIEnv*, jobject, jlong addrGray, jlong addrRgba)
+{
+    Mat& mGr  = *(Mat*)addrGray;
+    Mat& mRgb = *(Mat*)addrRgba;
+    vector<KeyPoint> v;
+
+    FastFeatureDetector detector(50);
+    detector.detect(mGr, v);
+    for( unsigned int i = 0; i < v.size(); i++ )
+    {
+        const KeyPoint& kp = v[i];
+        circle(mRgb, Point(kp.pt.x, kp.pt.y), 10, Scalar(255,0,0,255));
+    }
+}
+
+extern "C" {
+JNIEXPORT void JNICALL Java_org_opencv_samples_tutorial2_Tutorial2Activity_cannyEdgeDetection(JNIEnv*, jobject, jlong addrGray, jlong addrRgba);
+
+JNIEXPORT void JNICALL Java_org_opencv_samples_tutorial2_Tutorial2Activity_cannyEdgeDetection(JNIEnv*, jobject, jlong addrGray, jlong addrRgba)
+{
+    Mat& mGr  = *(Mat*)addrGray;
+    Mat& mRgb = *(Mat*)addrRgba;
+
+    int edgeThresh = 1;
+    int lowThreshold = 30;
+    int const max_lowThreshold = 100;
+    int ratio = 3;
+    int kernel_size = 3;
+
+    Canny( mGr, mRgb, lowThreshold, lowThreshold*ratio, kernel_size );
+
+    //addrRgba = mGr;
+
+
+
+   /*( Mat& mRgb = *(Mat*)addrRgba;
+    vector<KeyPoint> v;
+
+    FastFeatureDetector detector(50);
+    detector.detect(mGr, v);
+    for( unsigned int i = 0; i < v.size(); i++ )
+    {
+        const KeyPoint& kp = v[i];
+        circle(mRgb, Point(kp.pt.x, kp.pt.y), 10, Scalar(255,0,0,255));
+    }*/
+}
+}
+}
+
+
